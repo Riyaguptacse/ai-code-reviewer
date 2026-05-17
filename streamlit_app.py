@@ -15,7 +15,7 @@ if st.button("Review Code"):
     else:
         with st.spinner("AI is reviewing your code..."):
             response = requests.post(
-                "http://127.0.0.1:8000/review",
+                "https://ai-code-reviewer-1-n718.onrender.com/review",
                 json={
                     "language": language,
                     "code": code
