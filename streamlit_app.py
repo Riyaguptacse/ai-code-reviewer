@@ -8,24 +8,29 @@ st.title("🤖 AI Code Reviewer")
 language = st.selectbox("Select Language", ["Python", "JavaScript", "Java"])
 
 code = st.text_area("Paste your code here", height=300)
-
-if st.button("Review Code"):
-    if not code.strip():
-        st.warning("Please enter some code")
-    else:
-        with st.spinner("AI is reviewing your code..."):
-            response = requests.post(
-                "https://ai-code-reviewer-1-n718.onrender.com/review",
+def call_api():
+    for i in range(3):
+        try:
+            r = requests.post(
+                "https://your-backend.onrender.com/review",
                 json={
                     "language": language,
                     "code": code
-                }
+                },
+                timeout=30
             )
 
-            if response.status_code == 200:
-                st.subheader("AI Review")
-                data = response.json()
-                st.write(data.get("review", data))
-                
-            else:
-                st.error("Backend error")
+            if r.status_code == 200:
+                return r.json()
+
+        except Exception:
+            time.sleep(2)
+
+    return {"review": "Server is waking up, please retry."}
+
+
+if st.button("Review Code"):
+    with st.spinner("Reviewing..."):
+        result = call_api()
+        st.subheader("AI Review")
+        st.write(result.get("review"))
